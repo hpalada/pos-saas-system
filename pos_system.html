@@ -1,0 +1,767 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--c-ink:#185FA5;--c-ink-bg:#E6F1FB;--c-ink-border:#85B7EB;--c-grn:#3B6D11;--c-grn-bg:#EAF3DE;--c-grn-bd:#97C459;--c-amb:#854F0B;--c-amb-bg:#FAEEDA;--c-amb-bd:#EF9F27;--c-red:#A32D2D;--c-red-bg:#FCEBEB;--c-red-bd:#F09595;--c-pur:#534AB7;--c-pur-bg:#EEEDFE;--c-pur-bd:#AFA9EC}
+.shell{display:grid;grid-template-columns:200px 1fr;grid-template-rows:50px 1fr;height:750px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-tertiary)}
+.topbar{grid-column:1/-1;background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;padding:0 14px;gap:10px;font-size:13px}
+.topbar-brand{font-weight:500;font-size:14px}
+.t-badge{font-size:11px;padding:2px 8px;border-radius:20px}
+.t-badge.info{background:var(--c-ink-bg);color:var(--c-ink)}
+.t-badge.grn{background:var(--c-grn-bg);color:var(--c-grn)}
+.t-badge.warn{background:var(--c-amb-bg);color:var(--c-amb)}
+.t-badge.red{background:var(--c-red-bg);color:var(--c-red)}
+.t-badge.pur{background:var(--c-pur-bg);color:var(--c-pur)}
+.sidebar{background:var(--color-background-primary);border-right:0.5px solid var(--color-border-tertiary);padding:10px 6px;display:flex;flex-direction:column;gap:1px;overflow-y:auto}
+.nav{display:flex;align-items:center;gap:9px;padding:7px 10px;font-size:12px;color:var(--color-text-secondary);cursor:pointer;border-radius:6px;transition:background .12s}
+.nav:hover{background:var(--color-background-secondary)}
+.nav.active{background:var(--c-ink-bg);color:var(--c-ink);font-weight:500}
+.nav-ico{width:14px;height:14px;flex-shrink:0}
+.nav-group{font-size:10px;color:var(--color-text-tertiary);padding:10px 10px 3px;font-weight:500;letter-spacing:.04em}
+.content{overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.sec{display:none;flex-direction:column;gap:12px}
+.sec.on{display:flex}
+.row{display:flex;gap:10px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:11px 13px}
+.stat-l{font-size:11px;color:var(--color-text-secondary);margin-bottom:3px}
+.stat-v{font-size:18px;font-weight:500}
+.stat-s{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:13px}
+.card-t{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 9px;border-radius:20px;cursor:pointer;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);transition:all .12s}
+.chip.on{background:var(--c-ink-bg);color:var(--c-ink);border-color:var(--c-ink-border)}
+.btn{padding:7px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-primary);font-size:12px;cursor:pointer;transition:all .12s}
+.btn:hover{background:var(--color-background-secondary)}
+.btn.primary{background:var(--c-ink);color:#fff;border-color:var(--c-ink)}
+.btn.primary:hover{opacity:.88}
+.btn.success{background:var(--c-grn-bg);color:var(--c-grn);border-color:var(--c-grn-bd)}
+.btn.danger{background:var(--c-red-bg);color:var(--c-red);border-color:var(--c-red-bd);padding:4px 10px;font-size:11px}
+.inp{width:100%;padding:6px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:12px;background:var(--color-background-primary);color:var(--color-text-primary)}
+.inp:focus{outline:none;border-color:var(--c-ink-border)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{font-size:11px;color:var(--color-text-tertiary);text-align:left;padding:5px 8px;border-bottom:0.5px solid var(--color-border-tertiary);font-weight:400}
+td{padding:6px 8px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary);vertical-align:middle}
+tr:last-child td{border:none}
+tr:hover td{background:var(--color-background-secondary)}
+.tag{font-size:10px;padding:2px 7px;border-radius:20px;display:inline-block}
+.pos-layout{display:grid;grid-template-columns:1fr 260px;gap:10px;height:100%}
+.prod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;align-content:start}
+.prod-tile{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:9px;cursor:pointer;transition:border-color .12s}
+.prod-tile:hover{border-color:var(--c-ink-border)}
+.prod-tile-n{font-size:11px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prod-tile-p{font-size:13px;font-weight:500;color:var(--c-ink)}
+.prod-tile-s{font-size:10px;color:var(--color-text-tertiary)}
+.cart{display:flex;flex-direction:column;gap:8px;height:100%}
+.cart-items{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:5px;min-height:0}
+.cart-row{display:flex;align-items:center;gap:6px;padding:5px 7px;background:var(--color-background-secondary);border-radius:6px}
+.qty-b{width:18px;height:18px;border:0.5px solid var(--color-border-secondary);border-radius:4px;background:var(--color-background-primary);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;color:var(--color-text-secondary);flex-shrink:0}
+.tot-row{display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary);margin-bottom:3px}
+.tot-final{display:flex;justify-content:space-between;font-size:13px;font-weight:500;border-top:0.5px solid var(--color-border-tertiary);padding-top:7px;margin-top:4px}
+.pay-btns{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.rpt-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rpt-types{display:flex;gap:6px;flex-wrap:wrap}
+.bar-wrap{position:relative;width:100%;height:160px}
+.spark{display:flex;align-items:flex-end;gap:3px;height:52px}
+.sparkbar{flex:1;border-radius:2px 2px 0 0;background:var(--c-ink-bg);border:0.5px solid var(--c-ink-border);transition:all .2s;cursor:pointer}
+.sparkbar:hover,.sparkbar.hi{background:var(--c-ink);border-color:var(--c-ink)}
+.toast{position:absolute;top:58px;right:12px;padding:8px 13px;border-radius:var(--border-radius-md);font-size:12px;font-weight:500;z-index:99;pointer-events:none;transition:opacity .3s}
+.toast.grn{background:var(--c-grn-bg);color:var(--c-grn);border:0.5px solid var(--c-grn-bd)}
+.toast.warn{background:var(--c-amb-bg);color:var(--c-amb);border:0.5px solid var(--c-amb-bd)}
+.toast.hide{opacity:0}
+.offline-bar{background:var(--c-amb-bg);color:var(--c-amb);border:0.5px solid var(--c-amb-bd);border-radius:var(--border-radius-md);padding:6px 10px;font-size:11px;display:flex;align-items:center;gap:8px}
+.prog-wrap{height:5px;background:var(--color-border-tertiary);border-radius:3px;overflow:hidden;margin-top:4px}
+.prog{height:100%;border-radius:3px;background:var(--c-ink)}
+.inv-low{color:var(--c-amb);font-weight:500}
+.inv-ok{color:var(--c-grn)}
+.inv-zero{color:var(--c-red);font-weight:500}
+.fac-header{border-bottom:2px solid var(--c-ink);padding-bottom:10px;margin-bottom:12px}
+.fac-table td,.fac-table th{padding:5px 6px}
+.fac-total-row td{font-weight:500;border-top:0.5px solid var(--color-border-primary)}
+select{padding:6px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:12px;background:var(--color-background-primary);color:var(--color-text-primary)}
+input[type=date]{padding:5px 8px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:12px;background:var(--color-background-primary);color:var(--color-text-primary)}
+</style>
+
+<div style="position:relative">
+<div class="shell">
+
+<div class="topbar">
+  <svg class="nav-ico" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1" fill="#185FA5"/><rect x="9" y="1" width="6" height="6" rx="1" fill="#185FA5" opacity=".5"/><rect x="1" y="9" width="6" height="6" rx="1" fill="#185FA5" opacity=".5"/><rect x="9" y="9" width="6" height="6" rx="1" fill="#185FA5"/></svg>
+  <span class="topbar-brand">StarMart POS</span>
+  <span class="t-badge info" id="tenant-badge">starmart-tgu-001</span>
+  <span class="t-badge pur" id="role-badge">Admin</span>
+  <span id="cash-badge" class="t-badge grn">Caja abierta</span>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+    <svg width="8" height="8"><circle cx="4" cy="4" r="4" fill="#639922" id="dot-online"/></svg>
+    <span id="lbl-online" style="font-size:11px;color:var(--color-text-secondary)">Online</span>
+    <button class="btn" style="padding:4px 10px;font-size:11px" onclick="toggleOffline()">Simular offline</button>
+    <span style="font-size:12px;color:var(--color-text-secondary)">María Cajera</span>
+  </div>
+</div>
+
+<div class="sidebar">
+  <div class="nav-group">Operaciones</div>
+  <div class="nav active" id="n-pos" onclick="go('pos')">
+    <svg class="nav-ico" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M4 13h6M7 10v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    Caja / POS
+  </div>
+  <div class="nav" id="n-inv" onclick="go('inv')">
+    <svg class="nav-ico" viewBox="0 0 14 14" fill="none"><rect x="1" y="3" width="12" height="9" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M4 3V2a1 1 0 011-1h4a1 1 0 011 1v1" stroke="currentColor" stroke-width="1.2"/><path d="M4 7h6M4 10h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    Inventario
+  </div>
+  <div class="nav-group" style="margin-top:4px">Admin</div>
+  <div class="nav" id="n-dash" onclick="go('dash')">
+    <svg class="nav-ico" viewBox="0 0 14 14" fill="none"><rect x="1" y="7" width="3" height="6" rx=".5" fill="currentColor" opacity=".4"/><rect x="5.5" y="4" width="3" height="9" rx=".5" fill="currentColor" opacity=".7"/><rect x="10" y="1" width="3" height="12" rx=".5" fill="currentColor"/></svg>
+    Dashboard
+  </div>
+  <div class="nav" id="n-ventas" onclick="go('ventas')">
+    <svg class="nav-ico" viewBox="0 0 14 14" fill="none"><path d="M1 3h12M1 7h8M1 11h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    Historial ventas
+  </div>
+  <div class="nav" id="n-rpt" onclick="go('rpt')">
+    <svg class="nav-ico" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M4 9.5l2-2.5 2 1.5 2-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Reportes
+  </div>
+  <div class="nav" id="n-fac" onclick="go('fac')">
+    <svg class="nav-ico" viewBox="0 0 14 14" fill="none"><rect x="2" y="1" width="10" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M4 5h6M4 8h4M4 11h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    Facturación
+  </div>
+  <div class="nav" id="n-clientes" onclick="go('clientes')">
+    <svg class="nav-ico" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="5" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M2 12c0-2.761 2.239-4 5-4s5 1.239 5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    Clientes
+  </div>
+  <div class="nav" id="n-cash" onclick="go('cash')">
+    <svg class="nav-ico" viewBox="0 0 14 14" fill="none"><rect x="1" y="3" width="12" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/><circle cx="7" cy="7" r="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+    Caja (apertura/cierre)
+  </div>
+</div>
+
+<div class="content" id="content">
+
+<!-- POS -->
+<div class="sec on" id="s-pos">
+  <div id="offline-alert" style="display:none" class="offline-bar">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L1 12h12L7 1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M7 5v3M7 9.5v.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    Sin conexión — ventas se guardan localmente y sincronizan al reconectarse
+    <span id="pending-count" style="margin-left:auto;font-weight:500"></span>
+  </div>
+  <div class="pos-layout">
+    <div style="display:flex;flex-direction:column;gap:8px;min-height:0">
+      <div style="display:flex;gap:6px">
+        <input class="inp" id="bc-input" placeholder="Código de barras o nombre del producto..." oninput="filterProds(this.value)" style="flex:1"/>
+        <select onchange="filterCat(this.value)" style="width:110px">
+          <option value="">Todas</option>
+          <option>Bebidas</option><option>Snacks</option><option>Lácteos</option><option>Panadería</option><option>Limpieza</option>
+        </select>
+      </div>
+      <div class="prod-grid" id="prod-grid"></div>
+    </div>
+    <div class="card cart" style="min-height:0">
+      <div style="font-size:12px;font-weight:500;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+        <span>Carrito <span id="cart-count" style="font-size:11px;color:var(--color-text-tertiary)"></span></span>
+        <button class="btn danger" onclick="clearCart()">Vaciar</button>
+      </div>
+      <div class="cart-items" id="cart-items">
+        <div style="font-size:11px;color:var(--color-text-tertiary);text-align:center;padding:20px 0">Escanea o selecciona un producto</div>
+      </div>
+      <div style="margin-top:8px">
+        <div class="tot-row"><span>Subtotal</span><span id="c-sub">L 0.00</span></div>
+        <div class="tot-row"><span>Descuento</span><span style="display:flex;align-items:center;gap:4px"><input id="c-disc" type="number" min="0" value="0" oninput="renderTotals()" style="width:48px;padding:2px 5px;border:0.5px solid var(--color-border-secondary);border-radius:4px;font-size:11px;background:var(--color-background-primary);color:var(--color-text-primary)"> L</span></div>
+        <div class="tot-row"><span>ISV 15%</span><span id="c-tax">L 0.00</span></div>
+        <div class="tot-final"><span>Total</span><span id="c-total" style="color:var(--c-ink)">L 0.00</span></div>
+        <div class="pay-btns">
+          <button class="btn primary" onclick="completeSale('Efectivo')">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-right:4px"><rect x="1" y="3" width="10" height="7" rx="1" stroke="currentColor" stroke-width="1.1"/><circle cx="6" cy="6.5" r="1.5" stroke="currentColor" stroke-width="1.1"/></svg>Efectivo
+          </button>
+          <button class="btn" onclick="completeSale('Tarjeta')">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-right:4px"><rect x="1" y="2" width="10" height="8" rx="1" stroke="currentColor" stroke-width="1.1"/><path d="M1 5h10" stroke="currentColor" stroke-width="1.1"/></svg>Tarjeta
+          </button>
+        </div>
+        <button class="btn" style="width:100%;margin-top:5px;font-size:11px" onclick="completeSale('Transferencia')">Transferencia</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INVENTARIO -->
+<div class="sec" id="s-inv">
+  <div style="display:flex;gap:8px;align-items:center">
+    <input class="inp" placeholder="Buscar producto..." style="flex:1" oninput="filterInvTable(this.value)"/>
+    <button class="btn primary" onclick="showToast('Formulario de nuevo producto abierto','grn')">+ Nuevo producto</button>
+    <button class="btn" onclick="showToast('Exportando inventario a CSV...','grn')">Exportar CSV</button>
+  </div>
+  <div style="display:flex;gap:8px">
+    <div class="stat" style="flex:1"><div class="stat-l">Total SKU</div><div class="stat-v">9</div></div>
+    <div class="stat" style="flex:1"><div class="stat-l">Stock bajo</div><div class="stat-v inv-low">3</div></div>
+    <div class="stat" style="flex:1"><div class="stat-l">Sin stock</div><div class="stat-v inv-zero">1</div></div>
+    <div class="stat" style="flex:1"><div class="stat-l">Valor inventario</div><div class="stat-v" style="font-size:14px">L 28,400</div></div>
+  </div>
+  <div class="card">
+    <table id="inv-table">
+      <thead><tr><th>Producto</th><th>Código</th><th>Categoría</th><th>Precio</th><th>Costo</th><th>Stock</th><th>Mín.</th><th>Estado</th><th></th></tr></thead>
+      <tbody id="inv-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="sec" id="s-dash">
+  <div class="stats" id="dash-stats"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div class="card">
+      <div class="card-t">Ventas últimos 7 días</div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--color-text-tertiary);margin-bottom:4px"><span>L 0</span><span>L 12k</span></div>
+      <div class="spark" id="dash-spark"></div>
+      <div id="dash-spark-lbl" style="display:flex;justify-content:space-between;font-size:10px;color:var(--color-text-tertiary);margin-top:3px"></div>
+    </div>
+    <div class="card">
+      <div class="card-t">Top productos del mes</div>
+      <div id="dash-top"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-t">Últimas ventas</div>
+    <table><thead><tr><th>Recibo</th><th>Cajera</th><th>Items</th><th>Método</th><th>Total</th><th>Estado</th></tr></thead>
+    <tbody id="dash-sales"></tbody></table>
+  </div>
+</div>
+
+<!-- HISTORIAL VENTAS -->
+<div class="sec" id="s-ventas">
+  <div class="card" style="padding:10px 13px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <input type="date" id="v-from" value="2025-01-01"/>
+    <span style="font-size:12px;color:var(--color-text-tertiary)">al</span>
+    <input type="date" id="v-to" value="2025-01-31"/>
+    <select id="v-method"><option value="">Todos los métodos</option><option>Efectivo</option><option>Tarjeta</option><option>Transferencia</option></select>
+    <button class="btn primary" style="margin-left:auto" onclick="showToast('Buscando ventas...','grn')">Filtrar</button>
+    <button class="btn" onclick="showToast('Exportando a PDF...','grn')">Exportar PDF</button>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+    <div class="stat"><div class="stat-l">Total ventas</div><div class="stat-v">L 142,300</div></div>
+    <div class="stat"><div class="stat-l">Transacciones</div><div class="stat-v">623</div></div>
+    <div class="stat"><div class="stat-l">Ticket promedio</div><div class="stat-v">L 228</div></div>
+  </div>
+  <div class="card">
+    <table><thead><tr><th>Recibo #</th><th>Fecha</th><th>Cajera</th><th>Items</th><th>Método</th><th>Subtotal</th><th>ISV</th><th>Desc.</th><th>Total</th><th>Estado</th></tr></thead>
+    <tbody id="ventas-body"></tbody></table>
+  </div>
+</div>
+
+<!-- REPORTES -->
+<div class="sec" id="s-rpt">
+  <div class="card" style="padding:10px 13px">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <div class="rpt-types" id="rpt-types">
+        <button class="chip on" onclick="setRptType('general',this)">Ventas generales</button>
+        <button class="chip" onclick="setRptType('productos',this)">Por producto</button>
+        <button class="chip" onclick="setRptType('top',this)">Top productos</button>
+        <button class="chip" onclick="setRptType('metodos',this)">Métodos de pago</button>
+        <button class="chip" onclick="setRptType('caja',this)">Resumen de caja</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px;align-items:center;flex-wrap:wrap">
+      <span style="font-size:12px;color:var(--color-text-secondary)">Período:</span>
+      <button class="chip on" id="rp-d" onclick="setRptPeriod('dia',this)">Hoy</button>
+      <button class="chip" id="rp-w" onclick="setRptPeriod('semana',this)">Esta semana</button>
+      <button class="chip" id="rp-m" onclick="setRptPeriod('mes',this)">Este mes</button>
+      <button class="chip" id="rp-y" onclick="setRptPeriod('año',this)">Este año</button>
+      <span style="color:var(--color-text-tertiary);font-size:11px">o personalizado:</span>
+      <input type="date" id="rp-from" value="2025-01-01" style="font-size:11px;padding:4px 7px"/>
+      <input type="date" id="rp-to" value="2025-01-31" style="font-size:11px;padding:4px 7px"/>
+      <button class="btn primary" style="margin-left:auto" onclick="genReport()">Generar</button>
+      <button class="btn" onclick="showToast('Exportando reporte PDF...','grn')">PDF</button>
+      <button class="btn" onclick="showToast('Exportando a Excel...','grn')">Excel</button>
+    </div>
+  </div>
+  <div id="rpt-content"></div>
+</div>
+
+<!-- FACTURACIÓN -->
+<div class="sec" id="s-fac">
+  <div style="display:flex;gap:8px;align-items:center">
+    <input class="inp" placeholder="Buscar factura o cliente..." style="flex:1"/>
+    <button class="btn primary" onclick="showFacModal()">+ Nueva factura</button>
+    <button class="btn" onclick="showToast('Exportando facturas...','grn')">Exportar</button>
+  </div>
+  <div class="stats" style="grid-template-columns:repeat(4,1fr)">
+    <div class="stat"><div class="stat-l">Facturas emitidas</div><div class="stat-v">342</div></div>
+    <div class="stat"><div class="stat-l">Monto facturado</div><div class="stat-v" style="font-size:14px">L 98,420</div></div>
+    <div class="stat"><div class="stat-l">Pendientes de cobro</div><div class="stat-v inv-low">L 12,300</div></div>
+    <div class="stat"><div class="stat-l">Anuladas</div><div class="stat-v inv-zero">4</div></div>
+  </div>
+  <div class="card">
+    <table><thead><tr><th>Factura #</th><th>Fecha</th><th>Cliente</th><th>RTN</th><th>Subtotal</th><th>ISV 15%</th><th>Total</th><th>Estado</th><th></th></tr></thead>
+    <tbody id="fac-body"></tbody></table>
+  </div>
+  <div id="fac-preview" style="display:none"></div>
+</div>
+
+<!-- CLIENTES -->
+<div class="sec" id="s-clientes">
+  <div style="display:flex;gap:8px;align-items:center">
+    <input class="inp" placeholder="Buscar cliente o RTN..." style="flex:1"/>
+    <button class="btn primary" onclick="showToast('Formulario de nuevo cliente','grn')">+ Nuevo cliente</button>
+  </div>
+  <div class="card">
+    <table><thead><tr><th>Cliente</th><th>RTN / NIT</th><th>Email</th><th>Teléfono</th><th>Compras</th><th>Total gastado</th><th>Última compra</th></tr></thead>
+    <tbody id="clientes-body"></tbody></table>
+  </div>
+</div>
+
+<!-- CAJA -->
+<div class="sec" id="s-cash">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div class="card">
+      <div class="card-t">Sesión actual</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="stat"><div class="stat-l">Apertura</div><div class="stat-v">L 500.00</div><div class="stat-s">Hoy 07:30 AM — María Cajera</div></div>
+        <div class="stat"><div class="stat-l">Ventas efectivo</div><div class="stat-v inv-ok">L 6,420.00</div></div>
+        <div class="stat"><div class="stat-l">Ventas tarjeta</div><div class="stat-v" style="color:var(--c-pur)">L 2,100.00</div></div>
+        <div class="stat"><div class="stat-l">Efectivo esperado en caja</div><div class="stat-v">L 6,920.00</div></div>
+        <div style="margin-top:4px">
+          <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:4px">Efectivo a contar al cierre</div>
+          <input class="inp" type="number" placeholder="Ingresa el conteo físico de efectivo..." id="cash-close-val"/>
+          <button class="btn primary" style="width:100%;margin-top:6px" onclick="closeCash()">Cerrar caja y generar reporte</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-t">Historial de sesiones</div>
+      <table><thead><tr><th>Cajera</th><th>Apertura</th><th>Cierre esperado</th><th>Contado</th><th>Diferencia</th></tr></thead>
+      <tbody id="cash-history"></tbody></table>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+<div id="toast-el" class="toast grn hide" style="position:absolute"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const PRODS=[
+  {id:'1',name:'Coca-Cola 600ml',barcode:'750105530007',price:25,cost:18,stock:48,min:10,cat:'Bebidas'},
+  {id:'2',name:'Pepsi 600ml',barcode:'750107100801',price:24,cost:17,stock:6,min:10,cat:'Bebidas'},
+  {id:'3',name:'Agua Pura 1L',barcode:'750103131824',price:15,cost:10,stock:120,min:20,cat:'Bebidas'},
+  {id:'4',name:'Gatorade Azul',barcode:'750106530201',price:38,cost:28,stock:32,min:8,cat:'Bebidas'},
+  {id:'5',name:'Papas Ruffles',barcode:'750101905208',price:22,cost:15,stock:3,min:10,cat:'Snacks'},
+  {id:'6',name:'Doritos Nacho',barcode:'750101901305',price:22,cost:15,stock:0,min:10,cat:'Snacks'},
+  {id:'7',name:'Pan Bimbo',barcode:'750107100301',price:35,cost:24,stock:18,min:6,cat:'Panadería'},
+  {id:'8',name:'Leche Dos Pinos',barcode:'750101930505',price:52,cost:40,stock:24,min:6,cat:'Lácteos'},
+  {id:'9',name:'Red Bull 250ml',barcode:'900249010007',price:65,cost:50,stock:15,min:6,cat:'Bebidas'},
+];
+const CLIENTES=[
+  {name:'Consumidor Final',rtn:'—',email:'—',tel:'—',compras:312,total:71240,last:'2025-01-31'},
+  {name:'Supermercados La Colonia',rtn:'05019999000000',email:'compras@lacolonia.hn',tel:'2200-0000',compras:42,total:18420,last:'2025-01-28'},
+  {name:'Restaurante El Patio',rtn:'08011234567890',email:'admin@elpatio.hn',tel:'9900-1122',compras:28,total:9300,last:'2025-01-25'},
+];
+const FACTURAS=[
+  {num:'FAC-000342',date:'2025-01-31',client:'Consumidor Final',rtn:'CF',sub:652.17,isv:97.83,total:750,status:'Pagada'},
+  {num:'FAC-000341',date:'2025-01-30',client:'La Colonia',rtn:'05019999000000',sub:1739.13,isv:260.87,total:2000,status:'Pagada'},
+  {num:'FAC-000340',date:'2025-01-29',client:'El Patio',rtn:'08011234567890',sub:869.57,isv:130.43,total:1000,status:'Crédito'},
+  {num:'FAC-000339',date:'2025-01-28',client:'Consumidor Final',rtn:'CF',sub:347.83,isv:52.17,total:400,status:'Pagada'},
+  {num:'FAC-000338',date:'2025-01-25',client:'Consumidor Final',rtn:'CF',sub:260.87,isv:39.13,total:300,status:'Anulada'},
+];
+const SALES_HIST=[
+  {rec:'STM-000623',date:'2025-01-31 14:22',cashier:'María',items:5,method:'Efectivo',sub:217,isv:33,disc:0,total:250,status:'Sincronizado'},
+  {rec:'STM-000622',date:'2025-01-31 13:05',cashier:'María',items:3,method:'Tarjeta',sub:130,isv:20,disc:0,total:150,status:'Sincronizado'},
+  {rec:'STM-000621',date:'2025-01-31 11:40',cashier:'Carlos',items:7,method:'Efectivo',sub:607,isv:93,disc:50,total:650,status:'Sincronizado'},
+  {rec:'STM-000620',date:'2025-01-30 16:10',cashier:'Carlos',items:2,method:'Transferencia',sub:78,isv:12,disc:0,total:90,status:'Sincronizado'},
+  {rec:'STM-000619',date:'2025-01-30 10:30',cashier:'María',items:4,method:'Efectivo',sub:87,isv:13,disc:0,total:100,status:'Offline'},
+];
+const CASH_HIST=[
+  {cashier:'María Cajera',open:'L 500',expected:'L 6,920',counted:'L 6,920',diff:'L 0.00'},
+  {cashier:'Carlos Admin',open:'L 300',expected:'L 4,230',counted:'L 4,200',diff:'-L 30.00'},
+  {cashier:'María Cajera',open:'L 500',expected:'L 7,810',counted:'L 7,810',diff:'L 0.00'},
+];
+const SPARK=[5820,7340,6100,8900,5400,9100,8420];
+const SPARK_LBL=['Lun','Mar','Mié','Jue','Vie','Sáb','Hoy'];
+const TOP_PRODS=[
+  {name:'Coca-Cola 600ml',units:312,rev:7800},
+  {name:'Agua Pura 1L',units:248,rev:3720},
+  {name:'Pepsi 600ml',units:187,rev:4488},
+  {name:'Doritos Nacho',units:143,rev:3146},
+  {name:'Gatorade Azul',units:98,rev:3724},
+];
+
+let cart={}, isOffline=false, pendingSales=0, rptType='general', rptPeriod='dia';
+let chartInst=null;
+
+function fmt(n){return 'L '+Number(n).toFixed(2);}
+function fmtN(n){return Number(n).toLocaleString('es-HN',{minimumFractionDigits:2,maximumFractionDigits:2});}
+
+function showToast(msg,type='grn',dur=2800){
+  const t=document.getElementById('toast-el');
+  t.textContent=msg;t.className='toast '+type;
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('hide'),dur);
+}
+
+function go(id){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));
+  document.getElementById('s-'+id).classList.add('on');
+  const nav=document.getElementById('n-'+id);
+  if(nav) nav.classList.add('active');
+  if(id==='dash') buildDash();
+  if(id==='inv') buildInv();
+  if(id==='ventas') buildVentas();
+  if(id==='fac') buildFac();
+  if(id==='clientes') buildClientes();
+  if(id==='cash') buildCash();
+  if(id==='rpt') genReport();
+}
+
+function toggleOffline(){
+  isOffline=!isOffline;
+  document.getElementById('dot-online').setAttribute('fill',isOffline?'#BA7517':'#639922');
+  document.getElementById('lbl-online').textContent=isOffline?'Offline':'Online';
+  document.getElementById('offline-alert').style.display=isOffline?'flex':'none';
+  if(isOffline){pendingSales=0;showToast('Modo offline activo — ventas se guardan localmente','warn');}
+  else{showToast('Reconectado — '+pendingSales+' venta(s) sincronizada(s)','grn');pendingSales=0;updatePending();}
+}
+function updatePending(){
+  document.getElementById('pending-count').textContent=pendingSales>0?pendingSales+' pendiente(s)':'';
+}
+
+function buildProds(filter='',cat=''){
+  const g=document.getElementById('prod-grid');
+  const rows=PRODS.filter(p=>
+    (!filter||p.name.toLowerCase().includes(filter.toLowerCase())||p.barcode.includes(filter))&&
+    (!cat||p.cat===cat)
+  );
+  g.innerHTML=rows.map(p=>`<div class="prod-tile" onclick="addToCart('${p.id}')">
+    <div class="prod-tile-n">${p.name}</div>
+    <div class="prod-tile-p">${fmt(p.price)}</div>
+    <div class="prod-tile-s">Stock: <span style="color:${p.stock===0?'var(--c-red)':p.stock<p.min?'var(--c-amb)':'var(--c-grn)'}">${p.stock}</span></div>
+  </div>`).join('');
+}
+function filterProds(v){buildProds(v,document.querySelector('#s-pos select')?.value||'');}
+function filterCat(v){buildProds(document.getElementById('bc-input').value,v);}
+
+function addToCart(id){
+  const p=PRODS.find(x=>x.id===id);
+  if(!p||p.stock===0){showToast('Sin stock disponible','warn');return;}
+  cart[id]=cart[id]?{...cart[id],qty:cart[id].qty+1}:{...p,qty:1};
+  renderCart();
+  showToast('Agregado: '+p.name,'grn',1500);
+}
+function rmCart(id){delete cart[id];renderCart();}
+function chgQty(id,d){
+  if(!cart[id])return;
+  cart[id].qty+=d;
+  if(cart[id].qty<1)delete cart[id];
+  renderCart();
+}
+function clearCart(){cart={};renderCart();}
+
+function renderCart(){
+  const items=Object.values(cart);
+  const w=document.getElementById('cart-items');
+  document.getElementById('cart-count').textContent=items.length?'('+items.length+')':'';
+  if(!items.length){w.innerHTML='<div style="font-size:11px;color:var(--color-text-tertiary);text-align:center;padding:20px 0">Escanea o selecciona un producto</div>';renderTotals();return;}
+  w.innerHTML=items.map(i=>`<div class="cart-row">
+    <span style="flex:1;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${i.name}</span>
+    <div style="display:flex;align-items:center;gap:3px">
+      <div class="qty-b" onclick="chgQty('${i.id}',-1)">-</div>
+      <span style="font-size:11px;width:16px;text-align:center">${i.qty}</span>
+      <div class="qty-b" onclick="chgQty('${i.id}',1)">+</div>
+    </div>
+    <span style="font-size:11px;width:52px;text-align:right;font-weight:500">${fmt(i.price*i.qty)}</span>
+    <div class="qty-b" onclick="rmCart('${i.id}')" style="color:var(--c-red)">x</div>
+  </div>`).join('');
+  renderTotals();
+}
+
+function renderTotals(){
+  const items=Object.values(cart);
+  const sub=items.reduce((s,i)=>s+i.price*i.qty,0);
+  const disc=parseFloat(document.getElementById('c-disc')?.value||0)||0;
+  const base=Math.max(0,sub-disc);
+  const tax=base*0.15;
+  const total=base+tax;
+  document.getElementById('c-sub').textContent=fmt(sub);
+  document.getElementById('c-tax').textContent=fmt(tax);
+  document.getElementById('c-total').textContent=fmt(total);
+}
+
+function completeSale(method){
+  const items=Object.values(cart);
+  if(!items.length){showToast('Carrito vacío','warn');return;}
+  const sub=items.reduce((s,i)=>s+i.price*i.qty,0);
+  const disc=parseFloat(document.getElementById('c-disc').value)||0;
+  const total=(sub-disc)*1.15;
+  items.forEach(i=>{const p=PRODS.find(x=>x.id===i.id);if(p)p.stock=Math.max(0,p.stock-i.qty);});
+  if(isOffline){
+    pendingSales++;updatePending();
+    showToast('Venta guardada offline ('+method+') — L '+total.toFixed(2),'warn');
+  } else {
+    showToast('Venta completada — '+method+' — '+fmt(total),'grn');
+  }
+  SALES_HIST.unshift({rec:'STM-'+(624+pendingSales),date:'2025-01-31 '+new Date().toLocaleTimeString('es-HN',{hour:'2-digit',minute:'2-digit'}),cashier:'María',items:items.length,method,sub:sub-disc,isv:(sub-disc)*.15,disc,total,status:isOffline?'Offline':'Sincronizado'});
+  SPARK[6]=(SPARK[6]||0)+total;
+  cart={};document.getElementById('c-disc').value=0;
+  renderCart();buildProds();
+}
+
+function buildInv(filter=''){
+  const rows=PRODS.filter(p=>!filter||p.name.toLowerCase().includes(filter.toLowerCase()));
+  document.getElementById('inv-body').innerHTML=rows.map(p=>`<tr>
+    <td style="font-weight:500">${p.name}</td>
+    <td style="font-family:var(--font-mono);font-size:10px">${p.barcode}</td>
+    <td>${p.cat}</td>
+    <td>${fmt(p.price)}</td>
+    <td style="color:var(--color-text-tertiary)">${fmt(p.cost)}</td>
+    <td class="${p.stock===0?'inv-zero':p.stock<p.min?'inv-low':'inv-ok'}">${p.stock}</td>
+    <td style="color:var(--color-text-tertiary)">${p.min}</td>
+    <td><span class="tag" style="${p.stock===0?'background:var(--c-red-bg);color:var(--c-red)':p.stock<p.min?'background:var(--c-amb-bg);color:var(--c-amb)':'background:var(--c-grn-bg);color:var(--c-grn)'}">${p.stock===0?'Sin stock':p.stock<p.min?'Stock bajo':'OK'}</span></td>
+    <td><button class="btn" style="padding:3px 8px;font-size:11px" onclick="showToast('Editando: ${p.name}','grn')">Editar</button></td>
+  </tr>`).join('');
+}
+function filterInvTable(v){buildInv(v);}
+
+function buildDash(){
+  document.getElementById('dash-stats').innerHTML=`
+    <div class="stat"><div class="stat-l">Ventas hoy</div><div class="stat-v" style="color:var(--c-ink)">${fmt(SPARK[6])}</div><div class="stat-s">${SALES_HIST.filter(s=>s.date.startsWith('2025-01-31')).length} transacciones</div></div>
+    <div class="stat"><div class="stat-l">Esta semana</div><div class="stat-v">${fmt(SPARK.slice(-7).reduce((a,b)=>a+b,0))}</div></div>
+    <div class="stat"><div class="stat-l">Este mes</div><div class="stat-v">L 142,300</div><div class="stat-s">+8% vs mes anterior</div></div>
+    <div class="stat"><div class="stat-l">Stock bajo</div><div class="stat-v inv-low">${PRODS.filter(p=>p.stock<p.min).length}</div><div class="stat-s">productos en alerta</div></div>`;
+  const max=Math.max(...SPARK);
+  document.getElementById('dash-spark').innerHTML=SPARK.map((v,i)=>`<div class="sparkbar${i===6?' hi':''}" style="height:${Math.round((v/max)*100)}%" title="${SPARK_LBL[i]}: ${fmt(v)}"></div>`).join('');
+  document.getElementById('dash-spark-lbl').innerHTML=SPARK_LBL.map(l=>`<span style="flex:1;text-align:center">${l}</span>`).join('');
+  document.getElementById('dash-top').innerHTML=TOP_PRODS.map((p,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary)">
+    <span style="font-size:10px;color:var(--color-text-tertiary);width:14px;text-align:right">${i+1}</span>
+    <span style="flex:1;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</span>
+    <div style="width:60px;height:4px;background:var(--color-border-tertiary);border-radius:2px;overflow:hidden"><div style="height:100%;width:${Math.round((p.units/TOP_PRODS[0].units)*100)}%;background:var(--c-ink);border-radius:2px"></div></div>
+    <span style="font-size:11px;color:var(--color-text-secondary);width:28px;text-align:right">${p.units}</span>
+  </div>`).join('');
+  document.getElementById('dash-sales').innerHTML=SALES_HIST.slice(0,5).map(s=>`<tr>
+    <td style="font-family:var(--font-mono);font-size:10px">${s.rec}</td>
+    <td>${s.cashier}</td><td>${s.items}</td><td>${s.method}</td>
+    <td style="font-weight:500">${fmt(s.total)}</td>
+    <td><span class="tag" style="${s.status==='Offline'?'background:var(--c-amb-bg);color:var(--c-amb)':'background:var(--c-grn-bg);color:var(--c-grn)'}">${s.status}</span></td>
+  </tr>`).join('');
+}
+
+function buildVentas(){
+  document.getElementById('ventas-body').innerHTML=SALES_HIST.map(s=>`<tr>
+    <td style="font-family:var(--font-mono);font-size:10px">${s.rec}</td>
+    <td style="font-size:11px">${s.date}</td>
+    <td>${s.cashier}</td><td>${s.items}</td><td>${s.method}</td>
+    <td>${fmt(s.sub)}</td><td>${fmt(s.isv)}</td><td>${fmt(s.disc)}</td>
+    <td style="font-weight:500">${fmt(s.total)}</td>
+    <td><span class="tag" style="${s.status==='Offline'?'background:var(--c-amb-bg);color:var(--c-amb)':'background:var(--c-grn-bg);color:var(--c-grn)'}">${s.status}</span></td>
+  </tr>`).join('');
+}
+
+function buildFac(){
+  document.getElementById('fac-body').innerHTML=FACTURAS.map(f=>`<tr>
+    <td style="font-family:var(--font-mono);font-size:10px">${f.num}</td>
+    <td style="font-size:11px">${f.date}</td>
+    <td>${f.client}</td>
+    <td style="font-family:var(--font-mono);font-size:10px">${f.rtn}</td>
+    <td>${fmt(f.sub)}</td><td>${fmt(f.isv)}</td>
+    <td style="font-weight:500">${fmt(f.total)}</td>
+    <td><span class="tag" style="${f.status==='Pagada'?'background:var(--c-grn-bg);color:var(--c-grn)':f.status==='Anulada'?'background:var(--c-red-bg);color:var(--c-red)':'background:var(--c-amb-bg);color:var(--c-amb)'}">${f.status}</span></td>
+    <td><button class="btn" style="padding:3px 8px;font-size:11px" onclick="showFacDetail('${f.num}')">Ver</button></td>
+  </tr>`).join('');
+}
+
+function showFacDetail(num){
+  const f=FACTURAS.find(x=>x.num===num);
+  if(!f)return;
+  const el=document.getElementById('fac-preview');
+  el.style.display='block';
+  el.innerHTML=`<div class="card fac-header-card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div>
+        <div style="font-size:16px;font-weight:500">StarMart</div>
+        <div style="font-size:11px;color:var(--color-text-secondary)">RTN: 08019999000000<br>Tegucigalpa, Honduras</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:13px;font-weight:500;color:var(--c-ink)">${f.num}</div>
+        <div style="font-size:11px;color:var(--color-text-secondary)">Fecha: ${f.date}</div>
+        <span class="tag" style="${f.status==='Pagada'?'background:var(--c-grn-bg);color:var(--c-grn)':f.status==='Anulada'?'background:var(--c-red-bg);color:var(--c-red)':'background:var(--c-amb-bg);color:var(--c-amb)'}">${f.status}</span>
+      </div>
+    </div>
+    <div style="border-top:0.5px solid var(--color-border-tertiary);margin:10px 0;padding-top:10px;font-size:12px">
+      <strong>Cliente:</strong> ${f.client} &nbsp;&nbsp; <strong>RTN:</strong> ${f.rtn}
+    </div>
+    <table class="fac-table" style="font-size:12px">
+      <thead><tr><th>Descripción</th><th style="text-align:right">Cant.</th><th style="text-align:right">P. Unit.</th><th style="text-align:right">Subtotal</th></tr></thead>
+      <tbody>
+        <tr><td>Productos varios</td><td style="text-align:right">—</td><td style="text-align:right">—</td><td style="text-align:right">${fmt(f.sub)}</td></tr>
+      </tbody>
+      <tfoot class="fac-total-row">
+        <tr><td colspan="3" style="text-align:right;font-size:11px;color:var(--color-text-secondary)">Subtotal exento ISV</td><td style="text-align:right">${fmt(f.sub)}</td></tr>
+        <tr><td colspan="3" style="text-align:right;font-size:11px;color:var(--color-text-secondary)">ISV 15%</td><td style="text-align:right">${fmt(f.isv)}</td></tr>
+        <tr style="font-size:13px"><td colspan="3" style="text-align:right;font-weight:500">Total a pagar</td><td style="text-align:right;font-weight:500;color:var(--c-ink)">${fmt(f.total)}</td></tr>
+      </tfoot>
+    </table>
+    <div style="font-size:10px;color:var(--color-text-tertiary);margin-top:10px;border-top:0.5px solid var(--color-border-tertiary);padding-top:8px">
+      CAI: A1B2C3-D4E5F6-G7H8I9-J0K1L2 &nbsp;|&nbsp; Rango autorizado: FAC-000001 al FAC-000500 &nbsp;|&nbsp; Fecha límite emisión: 2025-12-31
+    </div>
+    <div style="margin-top:8px;display:flex;gap:6px">
+      <button class="btn primary" style="font-size:11px" onclick="showToast('Imprimiendo factura...','grn')">Imprimir</button>
+      <button class="btn" style="font-size:11px" onclick="showToast('Factura enviada por correo','grn')">Enviar por email</button>
+      <button class="btn danger" onclick="document.getElementById('fac-preview').style.display='none'">Cerrar</button>
+    </div>
+  </div>`;
+}
+
+function showFacModal(){
+  showToast('Abriendo formulario de nueva factura...','grn');
+}
+
+function buildClientes(){
+  document.getElementById('clientes-body').innerHTML=CLIENTES.map(c=>`<tr>
+    <td style="font-weight:500">${c.name}</td>
+    <td style="font-family:var(--font-mono);font-size:10px">${c.rtn}</td>
+    <td style="font-size:11px">${c.email}</td>
+    <td>${c.tel}</td>
+    <td style="text-align:right">${c.compras}</td>
+    <td style="font-weight:500;text-align:right">${fmt(c.total)}</td>
+    <td style="font-size:11px;color:var(--color-text-tertiary)">${c.last}</td>
+  </tr>`).join('');
+}
+
+function buildCash(){
+  document.getElementById('cash-history').innerHTML=CASH_HIST.map(c=>`<tr>
+    <td>${c.cashier}</td><td>${c.open}</td><td>${c.expected}</td><td>${c.counted}</td>
+    <td style="color:${c.diff.startsWith('-')?'var(--c-red)':'var(--c-grn)';}">${c.diff}</td>
+  </tr>`).join('');
+}
+
+function closeCash(){
+  const v=document.getElementById('cash-close-val').value;
+  if(!v){showToast('Ingresa el conteo físico','warn');return;}
+  const counted=parseFloat(v);
+  const expected=6920;
+  const diff=counted-expected;
+  showToast(`Caja cerrada. Diferencia: L ${diff.toFixed(2)}`+(diff===0?' — Cuadre exacto':diff>0?' — Sobrante':' — Faltante'),'grn',4000);
+}
+
+function setRptType(t,el){
+  rptType=t;
+  document.querySelectorAll('#rpt-types .chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  genReport();
+}
+function setRptPeriod(p,el){
+  rptPeriod=p;
+  document.querySelectorAll('#s-rpt .chip').forEach(c=>{if(['rp-d','rp-w','rp-m','rp-y'].includes(c.id))c.classList.remove('on');});
+  el.classList.add('on');
+  genReport();
+}
+
+function genReport(){
+  const el=document.getElementById('rpt-content');
+  if(!el)return;
+  if(chartInst){chartInst.destroy();chartInst=null;}
+  const periodLabels={dia:'Hoy',semana:'Esta semana',mes:'Este mes','año':'Este año'};
+  const pLabel=periodLabels[rptPeriod]||'Personalizado';
+
+  if(rptType==='general'){
+    const labels=rptPeriod==='dia'?['6h','8h','10h','12h','14h','16h','18h','20h']:
+      rptPeriod==='semana'?SPARK_LBL:
+      rptPeriod==='mes'?['S1','S2','S3','S4']:
+      ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    const data=rptPeriod==='dia'?[0,420,1100,1840,2230,1950,2180,1400]:
+      rptPeriod==='semana'?SPARK:
+      rptPeriod==='mes'?[38200,35100,41800,27200]:
+      [82000,75000,91000,88000,95000,102000,98000,87000,93000,109000,97000,142000];
+    el.innerHTML=`
+      <div class="stats" style="grid-template-columns:repeat(4,1fr)">
+        <div class="stat"><div class="stat-l">Total ventas</div><div class="stat-v" style="color:var(--c-ink)">${fmt(data.reduce((a,b)=>a+b,0))}</div><div class="stat-s">${pLabel}</div></div>
+        <div class="stat"><div class="stat-l">Transacciones</div><div class="stat-v">623</div></div>
+        <div class="stat"><div class="stat-l">Ticket promedio</div><div class="stat-v">L 228</div></div>
+        <div class="stat"><div class="stat-l">ISV recaudado</div><div class="stat-v" style="font-size:14px">${fmt(data.reduce((a,b)=>a+b,0)*0.15/1.15)}</div></div>
+      </div>
+      <div class="card">
+        <div class="card-t">Ventas — ${pLabel}</div>
+        <div style="position:relative;width:100%;height:180px"><canvas id="rpt-chart" role="img" aria-label="Gráfico de ventas por período">Ventas por período.</canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-t">Desglose por método de pago</div>
+        <table><thead><tr><th>Método</th><th style="text-align:right">Transacciones</th><th style="text-align:right">Monto</th><th style="text-align:right">%</th></tr></thead>
+        <tbody>
+          <tr><td>Efectivo</td><td style="text-align:right">382</td><td style="text-align:right;font-weight:500">L 87,200</td><td style="text-align:right">61.3%</td></tr>
+          <tr><td>Tarjeta</td><td style="text-align:right">192</td><td style="text-align:right;font-weight:500">L 44,100</td><td style="text-align:right">31.0%</td></tr>
+          <tr><td>Transferencia</td><td style="text-align:right">49</td><td style="text-align:right;font-weight:500">L 11,000</td><td style="text-align:right">7.7%</td></tr>
+        </tbody></table>
+      </div>`;
+    setTimeout(()=>{
+      const ctx=document.getElementById('rpt-chart');
+      if(!ctx)return;
+      chartInst=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Ventas (L)',data,backgroundColor:'#B5D4F4',borderColor:'#378ADD',borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>'L '+v.toLocaleString()},grid:{color:'rgba(0,0,0,0.04)'}},x:{grid:{display:false}}}}});
+    },80);
+  } else if(rptType==='productos'){
+    el.innerHTML=`
+      <div class="card">
+        <div class="card-t">Venta por producto — ${pLabel}</div>
+        <table><thead><tr><th>Producto</th><th>Categoría</th><th style="text-align:right">Unidades</th><th style="text-align:right">Subtotal</th><th style="text-align:right">ISV</th><th style="text-align:right">Total</th><th style="text-align:right">% ventas</th></tr></thead>
+        <tbody>${TOP_PRODS.map(p=>`<tr>
+          <td style="font-weight:500">${p.name}</td>
+          <td style="color:var(--color-text-tertiary)">Bebidas</td>
+          <td style="text-align:right">${p.units}</td>
+          <td style="text-align:right">${fmt(p.rev*0.87)}</td>
+          <td style="text-align:right">${fmt(p.rev*0.13)}</td>
+          <td style="text-align:right;font-weight:500">${fmt(p.rev)}</td>
+          <td style="text-align:right">${((p.rev/TOP_PRODS.reduce((a,b)=>a+b.rev,0))*100).toFixed(1)}%</td>
+        </tr>`).join('')}</tbody></table>
+      </div>`;
+  } else if(rptType==='top'){
+    el.innerHTML=`
+      <div class="card">
+        <div class="card-t">Top productos por unidades vendidas — ${pLabel}</div>
+        <div style="position:relative;width:100%;height:${TOP_PRODS.length*44+60}px"><canvas id="rpt-chart" role="img" aria-label="Top productos">Top productos vendidos.</canvas></div>
+      </div>`;
+    setTimeout(()=>{
+      const ctx=document.getElementById('rpt-chart');
+      if(!ctx)return;
+      chartInst=new Chart(ctx,{type:'bar',data:{labels:TOP_PRODS.map(p=>p.name),datasets:[{label:'Unidades',data:TOP_PRODS.map(p=>p.units),backgroundColor:'#9FE1CB',borderColor:'#1D9E75',borderWidth:1}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(0,0,0,0.04)'}},y:{grid:{display:false}}}}});
+    },80);
+  } else if(rptType==='metodos'){
+    el.innerHTML=`
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="card">
+          <div class="card-t">Distribución por método</div>
+          <div style="position:relative;width:100%;height:180px"><canvas id="rpt-chart" role="img" aria-label="Métodos de pago">Métodos de pago.</canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-t">Resumen</div>
+          <table><thead><tr><th>Método</th><th style="text-align:right">Trans.</th><th style="text-align:right">Total</th></tr></thead>
+          <tbody>
+            <tr><td>Efectivo</td><td style="text-align:right">382</td><td style="text-align:right;font-weight:500">L 87,200</td></tr>
+            <tr><td>Tarjeta</td><td style="text-align:right">192</td><td style="text-align:right;font-weight:500">L 44,100</td></tr>
+            <tr><td>Transferencia</td><td style="text-align:right">49</td><td style="text-align:right;font-weight:500">L 11,000</td></tr>
+          </tbody></table>
+        </div>
+      </div>`;
+    setTimeout(()=>{
+      const ctx=document.getElementById('rpt-chart');
+      if(!ctx)return;
+      chartInst=new Chart(ctx,{type:'doughnut',data:{labels:['Efectivo','Tarjeta','Transferencia'],datasets:[{data:[87200,44100,11000],backgroundColor:['#9FE1CB','#B5D4F4','#FAC775'],borderColor:['#1D9E75','#378ADD','#BA7517'],borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+    },80);
+  } else if(rptType==='caja'){
+    el.innerHTML=`
+      <div class="card">
+        <div class="card-t">Resumen de caja — ${pLabel}</div>
+        <table><thead><tr><th>Cajera</th><th>Apertura</th><th>Ventas efectivo</th><th>Esperado</th><th>Contado</th><th>Diferencia</th><th>Estado</th></tr></thead>
+        <tbody>${CASH_HIST.map(c=>`<tr>
+          <td>${c.cashier}</td><td>${c.open}</td><td>L 6,420</td><td>${c.expected}</td><td>${c.counted}</td>
+          <td style="color:${c.diff.startsWith('-')?'var(--c-red)':'var(--c-grn)'};font-weight:500">${c.diff}</td>
+          <td><span class="tag" style="background:var(--c-grn-bg);color:var(--c-grn)">Cerrada</span></td>
+        </tr>`).join('')}</tbody></table>
+      </div>`;
+  }
+}
+
+buildProds();
+buildDash();
+buildInv();
+buildVentas();
+buildFac();
+buildClientes();
+buildCash();
+genReport();
+</script>
