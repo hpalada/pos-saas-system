@@ -1,4 +1,4 @@
-# Gas Station POS System
+# POS SaaS System
 
 Point-of-sale system built for a gas station — handles fuel and product transactions, inventory management, shift reporting, and daily operations. Delivered as a single-file web application with no server dependency.
 
