@@ -1,60 +1,55 @@
-# POS SaaS System
+# POS System — Gas Station
 
-Point-of-sale system built for a gas station — handles fuel and product transactions, inventory management, shift reporting, and daily operations. Delivered as a single-file web application with no server dependency.
+Point-of-sale system built for a gas station in Honduras. Handles fuel and product transactions, cart management, cash and card payments, shift reporting, and inventory tracking. Delivered as a single-file SPA with no build step or server dependency — runs on any browser on existing hardware.
 
-> **Note:** This repository contains the UI shell and system architecture. Client transaction data is not included.
+> Used in daily operations at a real gas station.
 
-## Tech Stack
+## Stack
 
-- **Frontend** — HTML, CSS, Vanilla JavaScript (no framework)
-- **Architecture** — Single-page application with module-based navigation
-- **Styling** — Custom design system with semantic color tokens
+HTML · CSS · Vanilla JavaScript — no framework, no bundler, no external dependencies.
 
 ## Features
 
 ### POS Terminal
-- Product and fuel transaction entry
-- Cart management with quantity and price editing
-- Payment processing (cash, card)
-- Receipt generation
+- Fuel and store product transaction entry
+- Cart management — quantity editing, price overrides, line item removal
+- Cash and card payment processing with change calculation
+- Receipt generation per transaction
 
 ### Inventory
 - Real-time stock tracking for store products
 - Low-stock alerts
-- Stock adjustment logging
+- Stock adjustment and purchase logging
 
-### Reporting
+### Shift Reporting
 - Daily sales summaries
-- Shift close reports
-- Revenue breakdown by product category
+- Shift close reports with revenue breakdown by category
+- Cash session reconciliation — expected vs. actual cash at close
 
 ### Administration
-- User and cashier management
 - Product and price catalog management
-- Shift scheduling
+- User and cashier account management
 
-## System Design
+## Design Decisions
 
-Built as a self-contained single-page app to run on low-spec hardware common in small gas station environments. The modular section layout (sidebar navigation + content panels) mirrors a traditional desktop POS UX while running entirely in the browser.
-
-## Files
-
-| File | Description |
-|---|---|
-| `pos_system.html` | Complete POS application — open directly in a browser |
+Built as a self-contained single-file app because the target environment — a small gas station — runs on low-spec hardware with no local server. The modular section layout (sidebar navigation + content panels) mirrors a traditional desktop POS UX while running entirely in the browser with no internet dependency.
 
 ## How to Run
 
-No server or build step required:
+No install required:
 
 ```bash
 open pos_system.html
-# or drag into any modern browser
+# or drag the file into any modern browser
 ```
 
 ## Highlights
 
-- Developed a full POS system used in daily operations at a gas station
-- Designed a modular section-based SPA architecture with no framework dependency
-- Built a semantic color token system for consistent status indicators (alerts, confirmations, warnings)
-- Handled transactions, inventory tracking, and end-of-shift reporting in a single deployable file
+- Deployed and used in daily operations at a real gas station
+- Single-file SPA — zero dependencies, works offline, no setup needed on any machine
+- Semantic color token system for consistent status indicators across the UI
+- Cash session reconciliation with expected vs. actual tracking at shift close
+
+---
+
+Built by Homer Palada — CS student at Universidad Católica de Honduras, graduating May 2027.
